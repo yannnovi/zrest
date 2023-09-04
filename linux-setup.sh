@@ -1,0 +1,1 @@
+sudo apt install  -y libgtkmm-3.0-dev libspdlog-dev libfmt-dev libfmt libssl-dev libcurl4-openssl-dev libopencv-dev intltool

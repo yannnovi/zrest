@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE database SYSTEM "litesql.dtd"> 
+<database name="ZrestDB" namespace="zrestdb">
+  <include name="auth.xml" />
+    <object name="Project">
+        <field name="name" type="string" length="50"/>
+        <field name="description" type="string" length="256"/>
+      <index unique="true">
+        <indexfield name="name"/>
+=      </index>
+  </object>
+  <object name="idgen">
+    <field name="idgenenarator" type="integer" default="1" />
+  </object>
+  <object name="Request">
+        <field name="name" type="string" length="50"/>
+        <field name="description" type="string" length="256"/>
+        <field name="body" type="blob"/>
+        <field name="bodyFormat" type="integer">
+            <value name="json" value="0"/>
+            <value name="xml" value="1"/>
+        </field>
+        <field name="secure" type="boolean"/>
+    </object>
+    <relation>
+        <relate object="Request" handle="project"/>
+        <relate object="Project" handle="requests" limit="one"/>
+    </relation>
+</database>

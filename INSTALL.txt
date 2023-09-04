@@ -1,0 +1,2 @@
+- Needs modification in CMAKE to module FindGettext to GETTEXT_PROCESS_PO_FILES to strip the language of the name.
+- Needs to install litesql++. You need to copy the following library from the installation liblitesql_backend_sqlite3.so to system path.

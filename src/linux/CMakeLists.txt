@@ -1,0 +1,10 @@
+add_library (zrestlinux main_gnome.cpp mainwindow.cpp mainabout.cpp addproject.cpp requestmanager.cpp)
+target_include_directories(zrestlinux PUBLIC "../utils")
+target_include_directories(zrestlinux PUBLIC "../db")
+target_include_directories(zrestlinux PUBLIC "../lang")
+target_include_directories(zrestlinux PUBLIC "utils")
+target_include_directories(zrestlinux PUBLIC "../model")
+PKG_CHECK_MODULES(GTKMM REQUIRED gtkmm-3.0 gtk+-3.0 fmt spdlog)
+INCLUDE_DIRECTORIES(${GTKMM_INCLUDE_DIRS})
+
+target_include_directories (zrestlinux PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

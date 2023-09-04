@@ -1,0 +1,7 @@
+add_library (zrestdarwin main_darwin.mm MainWindowController.mm)
+target_include_directories(zrestdarwin PUBLIC "../utils")
+target_include_directories(zrestdarwin PUBLIC "../db")
+target_include_directories(zrestdarwin PUBLIC "../lang")
+target_include_directories(zrestdarwin PUBLIC "../model")
+target_include_directories(zrestdarwin PUBLIC ${Intl_INCLUDE_DIRS})
+target_include_directories (zrestdarwin PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

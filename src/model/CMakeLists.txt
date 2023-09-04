@@ -1,0 +1,10 @@
+add_library (zrestmodel projectrecord.cpp)
+if(WIN32)
+set(LTSINC "C:\\src\\litesql\\litesql-src-0.3.18\\include")
+endif()
+if(UNIX)
+set(LTSINC "/usr/local/include")
+endif()
+target_include_directories(zrestmodel PUBLIC "../db" ${LTSINC})
+target_include_directories (zrestmodel PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+

@@ -1,0 +1,4 @@
+widget_type,name,msgid
+button,RequestAddRequest,AddRequest
+button,RequestButQuitter,Quit
+button,RequestButtonDeleteRequest,DeleteRequest

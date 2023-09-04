@@ -1,0 +1,4 @@
+widget_type,name,msgid
+button,MainAddProject,AddProject
+button,MainButQuitter,Quit
+button,MainButtonDeleteProject,DeleteProject
