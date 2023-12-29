@@ -38,7 +38,7 @@ BOOL CALLBACK AddProjectProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 auto log = zrestlog::Log::getInstance()->getLogger();
                 log->error(_("The character '|' is forbiden in the name or the description"));
                 USES_CONVERSION;
-                MessageBox(NULL, A2T(_("The character '|' is forbiden in the name or the description")),A2T(_("Error")),
+                MessageBoxA(NULL, _("The character '|' is forbiden in the name or the description"),_("Error"),
                       MB_ICONERROR | MB_OK);
                 return TRUE;
             }
@@ -47,7 +47,7 @@ BOOL CALLBACK AddProjectProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 auto log = zrestlog::Log::getInstance()->getLogger();
                 log->error(_("Both field must not be empty"));
                 USES_CONVERSION;
-                MessageBox(NULL, A2T(_("Both field must not be empty")), A2T(_("Error")),
+                MessageBoxA(NULL, _("Both field must not be empty"), _("Error"),
                     MB_ICONERROR | MB_OK);
                 return TRUE;
             }

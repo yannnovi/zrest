@@ -1,1 +1,1 @@
-cmake -G"Visual Studio 16" CMakeLists.txt
+cmake -G"Visual Studio 17" CMakeLists.txt

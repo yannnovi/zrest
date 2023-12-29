@@ -1,4 +1,4 @@
-#ifndef UNICODE
+    #ifndef UNICODE
 #define UNICODE
 #endif 
 #include "mainwindow.hpp"
