@@ -19,7 +19,7 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(ENABLE_UNICODE on)
 endif()
 if(APPLE)
-set (spdlog_DIR "/Users/yannbourdeau/src/spdlog/build")
+set (spdlog_DIR "/opt/homebrew/include/spdlog")
 endif()
 if(NOT WIN32)
 FIND_PACKAGE(Intl REQUIRED)
@@ -82,7 +82,7 @@ endforeach()
 endif()
 if(APPLE)
 set(DLINK stdc++ "-framework Foundation" "-framework Cocoa" objc zrestdarwin /opt/homebrew/lib/libfmt.a)
-set(DINCL  src/darwin )
+set(DINCL  src/darwin /opt/homebrew/include)
 LINK_DIRECTORIES(/opt/homebrew/lib /usr/local/lib /System/DriverKit/usr/lib /)   
 endif()
 
@@ -91,7 +91,7 @@ set(DINCL src/linux)
    
 set(DLINK zrestlinux zrestlinuxutils )
 endif()
-if(UNIX)
+if(LINUX)
 set(LTSLINK /usr/local/lib/static/liblitesql.a  /usr/local/lib/static/liblitesql_sqlite.a /usr/local/lib/static/liblitesql-util.a /usr/local/lib/static/libmodel.a)
 endif()
 if(WIN32)
@@ -102,7 +102,7 @@ set(DLINK zrestwin32 )
 
 endif()
 
-target_include_directories(zrest PUBLIC  "/opt/homebrew/Cellar/spdlog/1.11.0/include/"
+target_include_directories(zrest PUBLIC 
                            "src/lang" "src/utils" "src/db" 
                            ${DINCL}
                            linux 
