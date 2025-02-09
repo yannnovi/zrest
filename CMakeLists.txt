@@ -20,6 +20,7 @@ set(ENABLE_UNICODE on)
 endif()
 if(APPLE)
 set (spdlog_DIR "/opt/homebrew/include/spdlog")
+set (CMAKE_OSX_ARCHITECTURE arm64)
 endif()
 if(NOT WIN32)
 FIND_PACKAGE(Intl REQUIRED)
@@ -101,12 +102,14 @@ set(DLINK zrestwin32 )
 #SET(zrest_LINKFLAGS zrestres.res )
 
 endif()
-
+if(APPLE)
+set (LTSLINK  /Users/yannbourdeau/src/zrest/liblitesql.a /Users/yannbourdeau/src/zrest/liblitesql_sqlite.a  /Users/yannbourdeau/src/zrest/liblitesql-util.a )
+endif()
 target_include_directories(zrest PUBLIC 
                            "src/lang" "src/utils" "src/db" 
                            ${DINCL}
                            linux 
                            ${GTKMM_INCLUDE_DIRS}
                            ${Intl_INCLUDE_DIRS})
-target_link_libraries (zrest LINK_PUBLIC zrestlanguages  zrestutils zrestdb  ${LTSLINK}     ${DLINK} ${GTKMM_LIBRARIES} ${Intl_LIBRARIES} Threads::Threads ${CMAKE_DL_LIBS} zrestmodel )
+target_link_libraries (zrest LINK_PUBLIC zrestlanguages  zrestutils zrestdb  ${LTSLINK}  ${DLINK} ${GTKMM_LIBRARIES} ${Intl_LIBRARIES} Threads::Threads ${CMAKE_DL_LIBS} zrestmodel )
 
