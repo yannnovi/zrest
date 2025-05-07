@@ -1,4 +1,5 @@
 #include "zrestdb.hpp"
+#include "litesql/split.hpp"
 namespace zrestdb {
 using namespace litesql;
 ProjectRequestRelation::Row::Row(const litesql::Database& db, const litesql::Record& rec)
