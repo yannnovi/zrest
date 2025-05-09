@@ -22,6 +22,7 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 {
     zrestlang::init_languages();
     zrestlog::Log::getInstance()->getLogger()->info(_("ZREST started."));
+    
     zrestdb::db::getInstance();
     auto rc = zrestgui::main_app(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
     zrestlog::Log::getInstance()->getLogger()->info(_("ZREST ended."));

@@ -238,7 +238,7 @@ public:
 std::ostream & operator<<(std::ostream& os, Request o);
 class ZrestDB : public litesql::Database {
 public:
-    ZrestDB(std::string backendType, std::string connInfo);
+    ZrestDB( const std::string& backendType, const std::string& connInfo);
 protected:
     virtual std::vector<litesql::Database::SchemaItem> getSchema() const;
     static void initialize();
