@@ -1,4 +1,4 @@
-add_library (zrestdarwin main_darwin.mm MainWindowController.mm)
+add_library (zrestdarwin main_darwin.mm MainWindowController.mm PanelExtension.mm AppDelegate.mm)
 target_include_directories(zrestdarwin PUBLIC "../utils")
 target_include_directories(zrestdarwin PUBLIC "../db")
 target_include_directories(zrestdarwin PUBLIC "../lang")
