@@ -12,14 +12,15 @@ set(CURL_LIBRARY "C:\\src\\curl-7.76.1")
 set(CURL_INCLUDE_DIR "C:\\src\\curl-7.76.1")
 set(spdlog_DIR "C:\\src\\spdlog")
 set(WIN32_EXECUTABLE)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(ENABLE_UNICODE on)
 endif()
 if(APPLE)
-   set (spdlog_DIR "/opt/homebrew/include/spdlog")
+set (spdlog_DIR "/opt/homebrew/include/spdlog")
+set (CMAKE_OSX_ARCHITECTURE arm64)
 endif()
 if(NOT WIN32)
 FIND_PACKAGE(Intl REQUIRED)
@@ -96,17 +97,19 @@ set(LTSLINK /usr/local/lib/static/liblitesql.a  /usr/local/lib/static/liblitesql
 endif()
 if(WIN32)
 set(DINCL src/win32 "c:\\src\\lite-sql\\include") 
-set(LTSLINK  "C:\\src\\lite-sql\\src\\library\\Release\\litesql.lib" "C:\\src\\lite-sql\\src\\library\\Release\\litesql-util.lib" "C:\\src\\lite-sql\\src\\generator\\Release\\model.lib" "C:\\src\\sqlite3\\sqlite3.lib")   
+set(LTSLINK  "C:\\src\\lite-sql\\src\\library\\Debug\\litesqld.lib" "C:\\src\\lite-sql\\src\\library\\Debug\\litesql-utild.lib" "C:\\src\\lite-sql\\src\\generator\\Debug\\modeld.lib" "C:\\src\\lite-sql\\src\\library\\3rdparty\\src\\libsqlite3-build\\Debug\\sqlite3.lib")   
 set(DLINK zrestwin32 )
 #SET(zrest_LINKFLAGS zrestres.res )
 
 endif()
-
+if(APPLE)
+set (LTSLINK  /Users/yannbourdeau/src/zrest/liblitesql.a /Users/yannbourdeau/src/zrest/liblitesql_sqlite.a  /Users/yannbourdeau/src/zrest/liblitesql-util.a )
+endif()
 target_include_directories(zrest PUBLIC 
                            "src/lang" "src/utils" "src/db" 
                            ${DINCL}
                            linux 
                            ${GTKMM_INCLUDE_DIRS}
                            ${Intl_INCLUDE_DIRS})
-target_link_libraries (zrest LINK_PUBLIC zrestlanguages  zrestutils zrestdb  ${LTSLINK}     ${DLINK} ${GTKMM_LIBRARIES} ${Intl_LIBRARIES} Threads::Threads ${CMAKE_DL_LIBS} zrestmodel )
+target_link_libraries (zrest LINK_PUBLIC zrestlanguages  zrestutils zrestdb  ${LTSLINK}  ${DLINK} ${GTKMM_LIBRARIES} ${Intl_LIBRARIES} Threads::Threads ${CMAKE_DL_LIBS} zrestmodel )
 
