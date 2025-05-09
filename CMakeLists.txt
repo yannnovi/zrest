@@ -97,7 +97,7 @@ set(LTSLINK /usr/local/lib/static/liblitesql.a  /usr/local/lib/static/liblitesql
 endif()
 if(WIN32)
 set(DINCL src/win32 "c:\\src\\lite-sql\\include") 
-set(LTSLINK  "C:\\src\\lite-sql\\src\\library\\Debug\\litesqld.lib" "C:\\src\\lite-sql\\src\\library\\Debug\\litesql-utild.lib" "C:\\src\\lite-sql\\src\\generator\\Debug\\modeld.lib" "C:\\src\\lite-sql\\src\\library\\3rdparty\\src\\libsqlite3-build\\Debug\\sqlite3.lib")   
+set(LTSLINK  "C:\\src\\lite-sql\\src\\library\\Release\\litesql.lib" "C:\\src\\lite-sql\\src\\library\\Release\\litesql-util.lib" "C:\\src\\lite-sql\\src\\generator\\Release\\model.lib" "C:\\src\\lite-sql\\_deps\\libsqlite3-build\\Release\\sqlite3.lib")   
 set(DLINK zrestwin32 )
 #SET(zrest_LINKFLAGS zrestres.res )
 
