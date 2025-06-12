@@ -15,7 +15,7 @@ const litesql::FieldType ProjectRequestRelation::Project("Project1_",A_field_typ
 const litesql::FieldType ProjectRequestRelation::Request("Request2_",A_field_type_integer,table__);
 void ProjectRequestRelation::link(const litesql::Database& db, const zrestdb::Project& o0, const zrestdb::Request& o1) {
     Record values;
-    Record fields;
+    Split fields;
     fields.push_back(Project.name());
     values.push_back(o0.id);
     fields.push_back(Request.name());
@@ -711,7 +711,7 @@ std::ostream & operator<<(std::ostream& os, Request o) {
     os << "-------------------------------------" << std::endl;
     return os;
 }
-ZrestDB::ZrestDB( const std::string& backendType, const std::string& connInfo)
+ZrestDB::ZrestDB(std::string backendType, std::string connInfo)
      : litesql::Database(backendType, connInfo) {
     initialize();
 }
