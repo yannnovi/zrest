@@ -93,7 +93,7 @@ set(DINCL src/linux)
 set(DLINK zrestlinux zrestlinuxutils )
 endif()
 if(LINUX)
-set(LTSLINK /usr/local/lib/static/liblitesql.a  /usr/local/lib/static/liblitesql_sqlite.a /usr/local/lib/static/liblitesql-util.a /usr/local/lib/static/libmodel.a)
+set (LTSLINK  /Users/yannbourdeau/src/litesql/src/library/liblitesql.a /Users/yannbourdeau/src/litesql/src/library/liblitesql_sqlite.a  /Users/yannbourdeau/src/litesql/src/library/liblitesql-util.a )
 endif()
 if(WIN32)
 set(DINCL src/win32 "c:\\src\\litesql\\include") 
@@ -103,7 +103,7 @@ set(DLINK zrestwin32 )
 
 endif()
 if(APPLE)
-set (LTSLINK  /Users/yannbourdeau/src/zrest/liblitesql.a /Users/yannbourdeau/src/zrest/liblitesql_sqlite.a  /Users/yannbourdeau/src/zrest/liblitesql-util.a )
+set (LTSLINK  /Users/yannbourdeau/src/litesql/src/library/liblitesql.a /Users/yannbourdeau/src/litesql/src/library/liblitesql_sqlite.a  /Users/yannbourdeau/src/litesql/src/library/liblitesql-util.a )
 endif()
 target_include_directories(zrest PUBLIC 
                            "src/lang" "src/utils" "src/db" 
