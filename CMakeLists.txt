@@ -84,26 +84,26 @@ endif()
 if(APPLE)
 set(DLINK stdc++ "-framework Foundation" "-framework Cocoa" objc zrestdarwin /opt/homebrew/lib/libfmt.a)
 set(DINCL  src/darwin /opt/homebrew/include)
-LINK_DIRECTORIES(/opt/homebrew/lib  /System/DriverKit/usr/lib /)   
+LINK_DIRECTORIES(/opt/homebrew/lib /usr/local/lib /System/DriverKit/usr/lib /)   
 endif()
 
 if(LINUX)
 set(DINCL src/linux) 
    
 set(DLINK zrestlinux zrestlinuxutils )
-set (LTSLINK  "/Users/yannbourdeau/src/litesql/src/library/liblitesql.a" "/Users/yannbourdeau/src/litesql/src/library/liblitesql_sqlite.a"  "/Users/yannbourdeau/src/litesql/src/library//liblitesql-util.a" )
-
 endif()
-
+if(LINUX)
+set(LTSLINK /usr/local/lib/static/liblitesql.a  /usr/local/lib/static/liblitesql_sqlite.a /usr/local/lib/static/liblitesql-util.a /usr/local/lib/static/libmodel.a)
+endif()
 if(WIN32)
-set(DINCL src/win32 "c:\\src\\lite-sql\\include") 
-set(LTSLINK  "C:\\src\\litesql\\src\\library\\Release\\litesql.lib" "C:\\src\\litesql\\src\\library\\Release\\litesql-util.lib" "C:\\src\\litesql\\src\\generator\\Release\\model.lib" "C:\\src\\lite-sql\\_deps\\libsqlite3-build\\Release\\sqlite3.lib")   
+set(DINCL src/win32 "c:\\src\\litesql\\include") 
+set(LTSLINK  "C:\\src\\litesql\\src\\library\\Debug\\litesqld.lib" "C:\\src\\litesql\\src\\library\\Debug\\litesql-utild.lib" "C:\\src\\litesql\\src\\generator\\Debug\\modeld.lib" "C:\\src\\litesql\\_deps\\libsqlite3-build\\Debug\\sqlite3d.lib")   
 set(DLINK zrestwin32 )
 #SET(zrest_LINKFLAGS zrestres.res )
 
 endif()
-if(APPLE )
-set (LTSLINK  "/Users/yannbourdeau/src/litesql/src/library/liblitesql.a" "/Users/yannbourdeau/src/litesql/src/library/liblitesql_sqlite.a"  "/Users/yannbourdeau/src/litesql/src/library//liblitesql-util.a" )
+if(APPLE)
+set (LTSLINK  /Users/yannbourdeau/src/zrest/liblitesql.a /Users/yannbourdeau/src/zrest/liblitesql_sqlite.a  /Users/yannbourdeau/src/zrest/liblitesql-util.a )
 endif()
 target_include_directories(zrest PUBLIC 
                            "src/lang" "src/utils" "src/db" 
