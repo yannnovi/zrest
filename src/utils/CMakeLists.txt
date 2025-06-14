@@ -11,5 +11,6 @@ if(APPLE)
 set(LTSINC "/Users/yannbourdeau/src/litesql/include")
 endif()
 
-target_include_directories (zrestutils PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR} ${LTSINC})
+target_include_directories (zrestutils PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR} ${LTSINC} /opt/homebrew/include)
+
 
