@@ -1,7 +1,7 @@
 find_package(spdlog REQUIRED)
 add_library (zrestutils log.cpp)
 if(WIN32)
-set(LTSINC "C:\\src\\litesql\\litesql-src-0.3.18\\include")
+set(LTSINC "C:\\src\\litesql\\include" "C:\\src\\spdlog\\include")
 INCLUDE_DIRECTORIES(${LTSINC})
 endif()
 if(LINUX)
