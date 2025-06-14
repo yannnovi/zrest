@@ -1,7 +1,7 @@
 #set(CMAKE_RC_COMPILER_INIT rc)
 ENABLE_LANGUAGE(RC)
 add_library (zrestwin32 main_win32.cpp addproject.cpp zrestres.rc requestmanager.cpp mainwindow.cpp)
-set(LTSINC "C:\\src\\litesql\\litesql-src-0.3.18\\include")
+set(LTSINC "C:\\src\\litesql\\include")
 SET( RES_LINKFLAGS ${CMAKE_CURRENT_BINARY_DIR}/zrestwin32.dir/Debug/zrestres.res )
 SET_TARGET_PROPERTIES( zrest PROPERTIES LINK_FLAGS ${RES_LINKFLAGS} )
 target_include_directories(zrestwin32 PUBLIC "../utils")

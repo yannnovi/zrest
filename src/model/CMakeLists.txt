@@ -1,6 +1,6 @@
 add_library (zrestmodel projectrecord.cpp)
 if(WIN32)
-set(LTSINC "C:\\src\\litesql\\litesql-src-0.3.18\\include")
+set(LTSINC "C:\\src\\litesql\\include")
 endif()
 if(UNIX)
 set(LTSINC "~/src/litesql/include")
