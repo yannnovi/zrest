@@ -39,4 +39,5 @@ int main(int argc,char ** argv)
     zrestlog::Log::getInstance()->getLogger()->info(_("ZREST ended."));
     return rc;
 }
+
 #endif
