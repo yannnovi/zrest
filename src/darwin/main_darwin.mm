@@ -117,13 +117,20 @@ static const CGFloat kButtonBottomMargin = 10.0;
     // Create table view
     NSTableView *tableView = [[NSTableView alloc] initWithFrame:NSMakeRect(0, 0, tableWidth, tableHeight)];
     
-    // Configure table column
-    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"name"];
-    [column setWidth:tableWidth - 20]; // Account for scrollbar
-    [column setEditable:NO];
-    [column setHeaderCell:[[NSTableHeaderCell alloc] initTextCell:@"Projects"]];
-    [tableView addTableColumn:column];
-    [column release];
+    // Configure table columns
+    NSTableColumn *nameColumn = [[NSTableColumn alloc] initWithIdentifier:@"name"];
+    [nameColumn setWidth:(tableWidth - 20) * 0.4]; // 40% of width
+    [nameColumn setEditable:NO];
+    [nameColumn setHeaderCell:[[NSTableHeaderCell alloc] initTextCell:@"Project Name"]];
+    [tableView addTableColumn:nameColumn];
+    [nameColumn release];
+    
+    NSTableColumn *descColumn = [[NSTableColumn alloc] initWithIdentifier:@"description"];
+    [descColumn setWidth:(tableWidth - 20) * 0.6]; // 60% of width
+    [descColumn setEditable:NO];
+    [descColumn setHeaderCell:[[NSTableHeaderCell alloc] initTextCell:@"Description"]];
+    [tableView addTableColumn:descColumn];
+    [descColumn release];
     
     // Configure table view
     [tableView setHeaderView:[[NSTableHeaderView alloc] init]];
@@ -132,6 +139,12 @@ static const CGFloat kButtonBottomMargin = 10.0;
     [tableView setAllowsColumnResizing:YES];
     [tableView setAllowsEmptySelection:YES];
     [tableView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    
+    // Set data source and delegate to AppDelegate
+    AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
+    [tableView setDataSource:appDelegate];
+    [tableView setDelegate:appDelegate];
+    appDelegate.projectsTableView = tableView;
     
     [scrollView setDocumentView:tableView];
     [tableView release];
@@ -196,6 +209,10 @@ int zrestgui::main_app(int argc, char *argv[])
         
         [mainWindow makeKeyAndOrderFront:nil];
         [NSApp activateIgnoringOtherApps:YES];
+        
+        // Load projects data
+        [appDelegate loadProjects];
+        
         [NSApp run];
     }
     @catch (NSException *exception) {

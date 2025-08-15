@@ -1,5 +1,8 @@
 #import "AppDelegate.h"
 #include "languages.hpp"
+#include "projectrecord.hpp"
+#include "zrestdb.hpp"
+#include "db.hpp"
 
 // Constants for panel layout
 static const CGFloat kPanelWidth = 400.0;
@@ -25,6 +28,8 @@ static const CGFloat kMargin = 20.0;
 @synthesize currentPanel = _currentPanel;
 @synthesize currentNameField = _currentNameField;
 @synthesize currentDescField = _currentDescField;
+@synthesize projectsTableView = _projectsTableView;
+@synthesize projectsArray = _projectsArray;
 
 - (void)ajouter:(id)sender {
     NSLog(@"Ajouter method called");
@@ -184,8 +189,14 @@ static const CGFloat kMargin = 20.0;
     NSLog(@"Project Name: %@", name);
     NSLog(@"Project Description: %@", description);
     
-    // TODO: Add code to save the project to the database
-    // Based on the codebase context, you would use zrestdb::Project to create a new project
+    zrestmodel::ProjectRecord prj;
+    prj.id = zrestdb::db::getInstance()->generateId();
+    prj.name = std::string([name UTF8String]);
+    prj.description = std::string([description UTF8String]);
+    prj.save();
+    
+    // Refresh the projects list to show the new project
+    [self refreshProjectsList];
     
     [self cleanupPanel:panel];
 }
@@ -204,9 +215,27 @@ static const CGFloat kMargin = 20.0;
 
 - (BOOL)validateFormFields {
     NSString *name = [self.currentNameField stringValue];
+    NSString *description = [self.currentDescField stringValue];
     
     if ([name length] == 0) {
         [self showValidationAlert:@"Name is required"];
+        return NO;
+    }
+
+    if ([description length] == 0) {
+        [self showValidationAlert:@"descriptiom is required"];
+        return NO;
+    }
+    
+    // Check for pipe character in name
+    if ([name containsString:@"|"]) {
+        [self showValidationAlert:@"Name cannot contain the pipe character '|'"];
+        return NO;
+    }
+    
+    // Check for pipe character in description
+    if ([description containsString:@"|"]) {
+        [self showValidationAlert:@"Description cannot contain the pipe character '|'"];
         return NO;
     }
     
@@ -246,6 +275,86 @@ static const CGFloat kMargin = 20.0;
     return YES;
 }
 
+#pragma mark - Project Management
+
+- (void)loadProjects {
+    if (!self.projectsArray) {
+        self.projectsArray = [[NSMutableArray alloc] init];
+    }
+    [self.projectsArray removeAllObjects];
+    
+    try {
+        // Load projects from database
+        auto liste_projets = zrestdb::db::getInstance()->findAllProject();
+        
+        for (auto& project : liste_projets)
+        {
+            std::string name = project.name;
+            std::string desc = project.description;
+            
+            // Store project data as dictionary for multiple columns
+            NSString *projectName = [NSString stringWithUTF8String:name.c_str()];
+            NSString *projectDesc = [NSString stringWithUTF8String:desc.c_str()];
+            
+            NSDictionary *projectData = @{
+                @"name": projectName,
+                @"description": projectDesc
+            };
+            
+            [self.projectsArray addObject:projectData];
+        }
+    }
+    catch (const std::exception& e) {
+        NSLog(@"Error loading projects: %s", e.what());
+    }
+    catch (...) {
+        NSLog(@"Unknown error loading projects");
+    }
+    
+    [self.projectsTableView reloadData];
+}
+
+- (void)refreshProjectsList {
+    [self loadProjects];
+}
+
+#pragma mark - NSTableViewDataSource
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return [self.projectsArray count];
+}
+
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    if (row < [self.projectsArray count]) {
+        NSDictionary *projectData = [self.projectsArray objectAtIndex:row];
+        
+        // Check column identifier to return appropriate data
+        NSString *columnId = [tableColumn identifier];
+        if ([columnId isEqualToString:@"name"]) {
+            return [projectData objectForKey:@"name"];
+        } else if ([columnId isEqualToString:@"description"]) {
+            return [projectData objectForKey:@"description"];
+        }
+        
+        // Default: return project name
+        return [projectData objectForKey:@"name"];
+    }
+    return @"";
+}
+
+#pragma mark - NSTableViewDelegate
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification {
+    NSInteger selectedRow = [self.projectsTableView selectedRow];
+    if (selectedRow >= 0 && selectedRow < [self.projectsArray count]) {
+        NSDictionary *projectData = [self.projectsArray objectAtIndex:selectedRow];
+        NSString *selectedProject = [projectData objectForKey:@"name"];
+        NSString *selectedDesc = [projectData objectForKey:@"description"];
+        NSLog(@"Selected project: %@ - %@", selectedProject, selectedDesc);
+        // TODO: Load project details or requests
+    }
+}
+
 - (void)dealloc {
     // Make sure we remove any observers
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -253,6 +362,8 @@ static const CGFloat kMargin = 20.0;
     [_currentPanel release];
     [_currentNameField release];
     [_currentDescField release];
+    [_projectsTableView release];
+    [_projectsArray release];
     [super dealloc];
 }
 
