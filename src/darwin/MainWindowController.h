@@ -1,4 +1,4 @@
 #import <Cocoa/Cocoa.h>
-@interface MainWindowController : NSWindowController<NSWindowDelegate>
-//@property (assign) NSViewController * viewController;
+
+@interface MainWindowController : NSWindowController <NSWindowDelegate>
 @end 

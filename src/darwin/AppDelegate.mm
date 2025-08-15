@@ -1,63 +1,120 @@
 #import "AppDelegate.h"
 #include "languages.hpp"
 
+// Constants for panel layout
+static const CGFloat kPanelWidth = 400.0;
+static const CGFloat kPanelHeight = 300.0;
+static const CGFloat kFieldHeight = 20.0;
+static const CGFloat kButtonHeight = 30.0;
+static const CGFloat kButtonWidth = 100.0;
+static const CGFloat kLabelWidth = 100.0;
+static const CGFloat kFieldWidth = 250.0;
+static const CGFloat kMargin = 20.0;
+
+@interface AppDelegate ()
+- (NSPanel *)createAddProjectPanel;
+- (void)setupPanelControls:(NSPanel *)panel;
+- (void)showPanel:(NSPanel *)panel;
+- (void)cleanupPanel:(NSPanel *)panel;
+- (BOOL)validateFormFields;
+- (void)showValidationAlert:(NSString *)message;
+@end
+
 @implementation AppDelegate
 @synthesize mainWindow;
+@synthesize currentPanel = _currentPanel;
+@synthesize currentNameField = _currentNameField;
+@synthesize currentDescField = _currentDescField;
 
 - (void)ajouter:(id)sender {
-    NSLog(@"Ajouter");
+    NSLog(@"Ajouter method called");
     
-    // Create the panel
-    NSPanel *panel = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 400, 300)
-                                                styleMask:NSWindowStyleMaskTitled|NSWindowStyleMaskClosable
+    @try {
+        self.currentPanel = [self createAddProjectPanel];
+        NSLog(@"Panel created: %@", self.currentPanel);
+        
+        [self setupPanelControls:self.currentPanel];
+        NSLog(@"Panel controls setup complete");
+        
+        [self showPanel:self.currentPanel];
+        NSLog(@"Show panel called");
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception in ajouter: %@", exception);
+    }
+}
+
+- (NSPanel *)createAddProjectPanel {
+    NSRect panelFrame = NSMakeRect(0, 0, kPanelWidth, kPanelHeight);
+    NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable;
+    
+    NSPanel *panel = [[NSPanel alloc] initWithContentRect:panelFrame
+                                                styleMask:styleMask
                                                   backing:NSBackingStoreBuffered
                                                     defer:NO];
     [panel setTitle:@"Ajouter un projet"];
     [panel center];
     
-    // Add some controls to the panel - with improved alignment and sizing
-    NSTextField *nameLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(20, 250, 100, 20)];
+    return panel; // Don't autorelease here since we want to retain it
+}
+
+- (void)setupPanelControls:(NSPanel *)panel {
+    CGFloat currentY = kPanelHeight - kMargin - kFieldHeight;
+    
+    // Name label and field
+    NSTextField *nameLabel = [[NSTextField alloc] initWithFrame:
+        NSMakeRect(kMargin, currentY, kLabelWidth, kFieldHeight)];
     [nameLabel setStringValue:@"Nom:"];
     [nameLabel setBezeled:NO];
     [nameLabel setDrawsBackground:NO];
     [nameLabel setEditable:NO];
     [nameLabel setSelectable:NO];
     
-    NSTextField *nameField = [[NSTextField alloc] initWithFrame:NSMakeRect(120, 250, 250, 20)];
+    NSTextField *nameField = [[NSTextField alloc] initWithFrame:
+        NSMakeRect(kMargin + kLabelWidth, currentY, kFieldWidth, kFieldHeight)];
     
-    NSTextField *descLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(20, 220, 100, 20)];
+    currentY -= (kFieldHeight + 10);
+    
+    // Description label and field
+    NSTextField *descLabel = [[NSTextField alloc] initWithFrame:
+        NSMakeRect(kMargin, currentY, kLabelWidth, kFieldHeight)];
     [descLabel setStringValue:@"Description:"];
     [descLabel setBezeled:NO];
     [descLabel setDrawsBackground:NO];
     [descLabel setEditable:NO];
     [descLabel setSelectable:NO];
     
-    NSTextField *descField = [[NSTextField alloc] initWithFrame:NSMakeRect(120, 220, 250, 20)];
+    NSTextField *descField = [[NSTextField alloc] initWithFrame:
+        NSMakeRect(kMargin + kLabelWidth, currentY, kFieldWidth, kFieldHeight)];
     
-    // Create a dictionary to store the form fields for access in the OK button handler
+    // Create form fields dictionary
     NSMutableDictionary *formFields = [NSMutableDictionary dictionary];
     [formFields setObject:nameField forKey:@"nameField"];
     [formFields setObject:descField forKey:@"descField"];
     
-    NSButton *okButton = [[NSButton alloc] initWithFrame:NSMakeRect(270, 20, 100, 30)];
+    // OK button
+    CGFloat okButtonX = kPanelWidth - kMargin - kButtonWidth;
+    NSButton *okButton = [[NSButton alloc] initWithFrame:
+        NSMakeRect(okButtonX, kMargin, kButtonWidth, kButtonHeight)];
     [okButton setTitle:@"OK"];
     [okButton setBezelStyle:NSBezelStyleRounded];
-    
-    // Set up a custom selector for the OK button that will process the form data
     [okButton setAction:@selector(handleOKButton:)];
-    
-    // Store the form fields dictionary in the button's represented object
-    [okButton setRepresentedObject:formFields];
-    
-    // Set the target to self (AppDelegate)
     [okButton setTarget:self];
+    [okButton setTag:1]; // Use tag to identify this as OK button
     
-    // Add a cancel button
-    NSButton *cancelButton = [[NSButton alloc] initWithFrame:NSMakeRect(160, 20, 100, 30)];
+    // Cancel button
+    CGFloat cancelButtonX = okButtonX - kButtonWidth - 10;
+    NSButton *cancelButton = [[NSButton alloc] initWithFrame:
+        NSMakeRect(cancelButtonX, kMargin, kButtonWidth, kButtonHeight)];
     [cancelButton setTitle:@"Cancel"];
     [cancelButton setBezelStyle:NSBezelStyleRounded];
     [cancelButton setAction:@selector(handleCancelButton:)];
     [cancelButton setTarget:self];
+    [cancelButton setTag:2]; // Use tag to identify this as Cancel button
+    
+    // Store form fields in instance variables for later access
+    self.currentNameField = nameField;
+    self.currentDescField = descField;
     
     // Add controls to panel
     [[panel contentView] addSubview:nameLabel];
@@ -67,47 +124,61 @@
     [[panel contentView] addSubview:okButton];
     [[panel contentView] addSubview:cancelButton];
     
-    // Store the panel in the button's represented object for access in the handler
-    [formFields setObject:panel forKey:@"panel"];
-    
-    // Set the panel to close when the escape key is pressed
+    // Set default button and key view loop
     [panel setDefaultButtonCell:[okButton cell]];
+    [nameField setNextKeyView:descField];
+    [descField setNextKeyView:okButton];
+    [okButton setNextKeyView:cancelButton];
+    [cancelButton setNextKeyView:nameField];
     
-    // Also handle window close button
+    // Release controls (they're retained by their superview)
+    [nameLabel release];
+    [nameField release];
+    [descLabel release];
+    [descField release];
+    [okButton release];
+    [cancelButton release];
+}
+
+- (void)showPanel:(NSPanel *)panel {
+    NSLog(@"showPanel called with panel: %@", panel);
+    
+    // Handle window close button
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(windowWillClose:)
                                                  name:NSWindowWillCloseNotification
                                                object:panel];
     
-    // Show the panel
+    NSLog(@"About to run modal for window");
     [NSApp runModalForWindow:panel];
-    
-    // Release the panel - it will be closed by the button handlers
-    [panel release];
+    NSLog(@"Modal session ended");
 }
 
+- (void)cleanupPanel:(NSPanel *)panel {
+    [NSApp stopModal];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSWindowWillCloseNotification
+                                                  object:panel];
+    
+    [panel orderOut:nil];
+    [panel release]; // Release the panel we created
+    
+    // Clear instance variables
+    self.currentPanel = nil;
+    self.currentNameField = nil;
+    self.currentDescField = nil;
+}
 // Handler for the OK button in the Ajouter panel
 - (void)handleOKButton:(id)sender {
-    // Get the form fields from the button's represented object
-    NSDictionary *formFields = [sender representedObject];
-    NSTextField *nameField = [formFields objectForKey:@"nameField"];
-    NSTextField *descField = [formFields objectForKey:@"descField"];
-    NSPanel *panel = [formFields objectForKey:@"panel"];
+    NSPanel *panel = (NSPanel *)[sender window];
     
-    // Get the values from the form fields
-    NSString *name = [nameField stringValue];
-    NSString *description = [descField stringValue];
-    
-    // Validate the form data
-    if ([name length] == 0) {
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText:@"Error"];
-        [alert setInformativeText:@"Name is required"];
-        [alert addButtonWithTitle:@"OK"];
-        [alert runModal];
-        [alert release];
+    if (![self validateFormFields]) {
         return;
     }
+    
+    NSString *name = [self.currentNameField stringValue];
+    NSString *description = [self.currentDescField stringValue];
     
     // Log the form data
     NSLog(@"Project Name: %@", name);
@@ -116,42 +187,39 @@
     // TODO: Add code to save the project to the database
     // Based on the codebase context, you would use zrestdb::Project to create a new project
     
-    // Stop the modal session and close the panel
-    [NSApp stopModal];
-    
-    // Remove the observer to prevent memory leaks
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSWindowWillCloseNotification
-                                                  object:panel];
-    
-    [panel orderOut:nil];
+    [self cleanupPanel:panel];
 }
 
 // Handler for the Cancel button
 - (void)handleCancelButton:(id)sender {
-    // Find the panel (it's the window that contains the button)
-    NSWindow *panel = [sender window];
-    
-    // Stop the modal session and close the panel
-    [NSApp stopModal];
-    
-    // Remove the observer to prevent memory leaks
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSWindowWillCloseNotification
-                                                  object:panel];
-    
-    [panel orderOut:nil];
+    NSPanel *panel = (NSPanel *)[sender window];
+    [self cleanupPanel:panel];
 }
 
 // Handler for window close notification
 - (void)windowWillClose:(NSNotification *)notification {
-    // Stop the modal session when the window is closed
-    [NSApp stopModal];
+    NSPanel *panel = (NSPanel *)[notification object];
+    [self cleanupPanel:panel];
+}
+
+- (BOOL)validateFormFields {
+    NSString *name = [self.currentNameField stringValue];
     
-    // Remove the observer to prevent memory leaks
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSWindowWillCloseNotification
-                                                  object:[notification object]];
+    if ([name length] == 0) {
+        [self showValidationAlert:@"Name is required"];
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (void)showValidationAlert:(NSString *)message {
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:@"Error"];
+    [alert setInformativeText:message];
+    [alert addButtonWithTitle:@"OK"];
+    [alert runModal];
+    [alert release];
 }
 
 // Called when the application is activated (including dock icon click)
@@ -182,6 +250,9 @@
     // Make sure we remove any observers
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [mainWindow release];
+    [_currentPanel release];
+    [_currentNameField release];
+    [_currentDescField release];
     [super dealloc];
 }
 

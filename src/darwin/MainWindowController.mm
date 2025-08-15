@@ -1,51 +1,36 @@
 #import "MainWindowController.h"
-id gWindow;
+
+static NSWindow *gWindow = nil;
+
 @interface MainWindowController ()
 @end
+
 @implementation MainWindowController 
-//@synthesize viewController=vc;
+
 - (void)windowDidLoad {
     [super windowDidLoad];
-    // Implement this method to handle any initialization after your window controller’s window has been loaded from its nib file.
+    gWindow = self.window;
+    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 }
+
 - (BOOL)windowShouldClose:(id)sender {
     [NSApp hide:nil];
     return NO;
 }
 
-- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
-{
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag {
     if (flag) {
         return NO;
-    }
-    else
-    {
-       [gWindow makeKeyAndOrderFront:self];// Window that you want open while click on dock app icon
+    } else {
+        if (gWindow) {
+            [gWindow makeKeyAndOrderFront:self];
+        }
         return YES;
     }
 }
-/*
-- (void)setViewController:(NSViewController *)newController
-{
-    if (vc)
-    {
-        NSResponder *controllerNextResponder = [vc nextResponder];
-        [super setNextResponder:controllerNextResponder];
-        [vc setNextResponder:nil];
-    }
 
-    vc = newController;
-    
-    if (newController)
-    {
-        NSResponder *ownNextResponder = [self nextResponder];
-        [super setNextResponder: vc];
-        [vc setNextResponder:ownNextResponder];
-    }
-}
-*/
--(void)awakeFromNib {
- // [self setViewController:this]
+- (void)awakeFromNib {
+    // Placeholder for nib-based initialization
 }
 
-@end 
+@end
