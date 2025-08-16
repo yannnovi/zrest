@@ -177,6 +177,18 @@ static const CGFloat kButtonBottomMargin = 10.0;
     [addButton setAutoresizingMask:NSViewMinXMargin | NSViewMaxYMargin];
     [[window contentView] addSubview:addButton];
     [addButton release];
+    
+    // Delete button (left of add button)
+    CGFloat deleteButtonX = addButtonX - kButtonWidth - kMargin;
+    NSRect deleteFrame = NSMakeRect(deleteButtonX, kButtonBottomMargin, kButtonWidth, kButtonHeight);
+    NSButton *deleteButton = [[NSButton alloc] initWithFrame:deleteFrame];
+    [deleteButton setTitle:@"Supprimer"];
+    [deleteButton setBezelStyle:NSBezelStyleRounded];
+    [deleteButton setAction:@selector(supprimer:)];
+    [deleteButton setTarget:appDelegate];
+    [deleteButton setAutoresizingMask:NSViewMinXMargin | NSViewMaxYMargin];
+    [[window contentView] addSubview:deleteButton];
+    [deleteButton release];
 }
 
 @end

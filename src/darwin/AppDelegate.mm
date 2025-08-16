@@ -201,6 +201,82 @@ static const CGFloat kMargin = 20.0;
     [self cleanupPanel:panel];
 }
 
+- (void)supprimer:(id)sender {
+    NSInteger selectedRow = [self.projectsTableView selectedRow];
+    
+    if (selectedRow < 0) {
+        // No project selected
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"No Selection"];
+        [alert setInformativeText:@"Please select a project to delete."];
+        [alert addButtonWithTitle:@"OK"];
+        [alert runModal];
+        [alert release];
+        return;
+    }
+    
+    if (selectedRow >= [self.projectsArray count]) {
+        NSLog(@"Invalid selection index: %ld", (long)selectedRow);
+        return;
+    }
+    
+    // Get the selected project
+    NSDictionary *projectData = [self.projectsArray objectAtIndex:selectedRow];
+    NSString *projectName = [projectData objectForKey:@"name"];
+    NSString *projectDesc = [projectData objectForKey:@"description"];
+    
+    // Show confirmation dialog
+    NSAlert *confirmAlert = [[NSAlert alloc] init];
+    [confirmAlert setMessageText:@"Delete Project"];
+    [confirmAlert setInformativeText:[NSString stringWithFormat:@"Are you sure you want to delete the project '%@'?\n\nThis action cannot be undone.", projectName]];
+    [confirmAlert addButtonWithTitle:@"Delete"];
+    [confirmAlert addButtonWithTitle:@"Cancel"];
+    [confirmAlert setAlertStyle:NSAlertStyleWarning];
+    
+    NSModalResponse response = [confirmAlert runModal];
+    [confirmAlert release];
+    
+    if (response == NSAlertFirstButtonReturn) {
+        // User confirmed deletion
+        try {
+            // Delete from database
+            std::string nameToDelete = std::string([projectName UTF8String]);
+            std::string description = std::string([projectDesc UTF8String]);
+
+            zrestmodel::ProjectRecord prj;
+
+        prj.name = nameToDelete;
+        prj.description = description;
+        prj.dele();
+            
+            NSLog(@"Deleted project: %@", projectName);
+            
+            // Refresh the projects list
+            [self refreshProjectsList];
+        }
+        catch (const std::exception& e) {
+            NSLog(@"C++ Exception deleting project: %s", e.what());
+            
+            NSAlert *errorAlert = [[NSAlert alloc] init];
+            [errorAlert setMessageText:@"Error"];
+            [errorAlert setInformativeText:@"Failed to delete the project. Please try again."];
+            [errorAlert addButtonWithTitle:@"OK"];
+            [errorAlert runModal];
+            [errorAlert release];
+        }
+        catch (...) {
+            NSLog(@"Unknown exception deleting project");
+            
+            NSAlert *errorAlert = [[NSAlert alloc] init];
+            [errorAlert setMessageText:@"Error"];
+            [errorAlert setInformativeText:@"Failed to delete the project. Please try again."];
+            [errorAlert addButtonWithTitle:@"OK"];
+            [errorAlert runModal];
+            [errorAlert release];
+        }
+    }
+}
+
 // Handler for the Cancel button
 - (void)handleCancelButton:(id)sender {
     NSPanel *panel = (NSPanel *)[sender window];

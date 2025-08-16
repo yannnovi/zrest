@@ -8,6 +8,7 @@
 @property (retain) NSTableView *projectsTableView;
 @property (retain) NSMutableArray *projectsArray;
 - (void)ajouter:(id)sender;
+- (void)supprimer:(id)sender;
 - (void)loadProjects;
 - (void)refreshProjectsList;
 @end
